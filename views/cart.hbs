@@ -23,6 +23,10 @@
     </table>
 
     <p><strong>Amount:</strong> <span class="price">{{amount}}</span></p>
+
+    <form action="/orders" method="POST">
+      <button type="submit" class="btn">Make Order</button>
+    </form>
   {{else}}
     <p>Cart is empty</p>
   {{/if}}
