@@ -10,12 +10,20 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const {title, price, img} = req.body
-  console.log(title)
-  const course = new Course(title, price, img)
+  const course = new Course({
+    title: req.body.title,
+    price: req.body.price,
+    img: req.body.img,
+    userId: req.user
+  })
 
-  await course.save()
-  res.redirect('/courses')
+  try {
+    await course.save()
+    res.redirect('/courses')
+  } catch (e) {
+    console.log(e)
+  }
+
 })
 
 module.exports = router
