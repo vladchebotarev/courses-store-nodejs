@@ -16,15 +16,15 @@ const authRoutes = require('./routes/auth')
 const coursesRoutes = require('./routes/courses')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
-
-const MONGODB_URI = 'mongodb+srv://admin:2Jw4Jw3kcYZGKUCP@mongodb-cluster.foasff6.mongodb.net/shop'
+const keys = require('./keys')
 
 const app = express()
 
 const hbs = expressHandlebars.create({
   defaultLayout: 'main',
   extname: 'hbs',
-  handlebars: allowInsecurePrototypeAccess(Handlebars)
+  handlebars: allowInsecurePrototypeAccess(Handlebars),
+  helpers: require('./utils/hbs-helpers')
 })
 
 app.engine('hbs', hbs.engine)
@@ -33,14 +33,14 @@ app.set('views', 'views')
 
 const store = new MongoStore({
   collection: 'sessions',
-  uri: MONGODB_URI
+  uri: keys.MONGODB_URI
 
 })
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-  secret: 'some secret value',
+  secret: keys.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store
@@ -61,7 +61,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    await mongoose.connect(MONGODB_URI, {useNewUrlParser: true})
+    await mongoose.connect(keys.MONGODB_URI, {useNewUrlParser: true})
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

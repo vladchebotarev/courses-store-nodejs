@@ -1,0 +1,47 @@
+<div class="auth">
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s6"><a href="/auth/login" target="_self">Login</a></li>
+        <li class="tab col s6"><a class="active" href="">Register</a></li>
+      </ul>
+    </div>
+    <div class="col s6 offset-s3">
+      <h3>Create an Account</h3>
+
+      {{#if error}}
+        <p class="alert alert-danger">{{error}}</p>
+      {{/if}}
+
+      <form action="/auth/register" method="POST">
+        <div class="input-field">
+          <input type="text" class="validate" id="name" name="name" required>
+          <label for="name">Name</label>
+          <span class="helper-text" data-error="Please enter name!"></span>
+        </div>
+
+        <div class="input-field">
+          <input type="email" class="validate" id="email" name="email" required>
+          <label for="email">Email</label>
+          <span class="helper-text" data-error="Please enter email!"></span>
+        </div>
+
+        <div class="input-field">
+          <input type="password" class="validate" id="password" name="password" required>
+          <label for="password">Password</label>
+          <span class="helper-text" data-error="Please enter password!"></span>
+        </div>
+
+        <div class="input-field">
+          <input type="password" class="validate" id="confirm" name="confirm" required>
+          <label for="confirm">Confirm Password</label>
+          <span class="helper-text" data-error="Please confirm the password!"></span>
+        </div>
+
+        <input type="hidden" name="_csrf" value="{{csrf}}">
+
+        <button class="btn btn-primary">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
