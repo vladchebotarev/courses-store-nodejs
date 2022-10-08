@@ -1,6 +1,10 @@
 <h1>Edit {{course.title}}</h1>
 
-<form action="/courses/edit" method="POST" class="course-form">
+{{#if error}}
+  <p class="alert alert-danger">{{error}}</p>
+{{/if}}
+
+<form action="/courses/{{course.id}}/edit" method="POST" class="course-form">
   <div class="input-field">
     <input type="text" class="validate" id="title" name="title" required value="{{course.title}}">
     <label for="title">Course Title</label>
@@ -19,7 +23,6 @@
     <span class="helper-text" data-error="Input correct Image URL!"></span>
   </div>
 
-  <input type="hidden" name="id" value="{{course.id}}">
   <input type="hidden" name="_csrf" value="{{csrf}}">
 
   <button type="submit" class="btn btn-primary">Edit Course</button>

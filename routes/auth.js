@@ -1,17 +1,18 @@
 const {Router} = require('express')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
+const {validationResult} = require('express-validator')
 const nodemailer = require('nodemailer')
 const sendgrid = require('nodemailer-sendgrid-transport')
 const User = require('../models/user')
-const keys = require('../keys')
 const regEmail = require('../emails/registration')
 const resetEmail = require('../emails/reset')
+const {registerValidators} = require('../utils/validators')
 
 const router = Router()
 
 const transporter = nodemailer.createTransport(sendgrid({
-  auth: {api_key: keys.SENDGRID_API_KEY}
+  auth: {api_key: process.env.SENDGRID_API_KEY}
 }))
 
 router.get('/login', async (req, res) => {
@@ -61,29 +62,25 @@ router.get('/register', async (req, res) => {
   })
 })
 
-router.post('/register', async (req, res) => {
+router.post('/register', registerValidators, async (req, res) => {
   try {
-    const {name, email, password, confirm} = req.body
-    if (password !== confirm) {
-      req.flash('error', 'Password conformation is not the same!')
-      return res.redirect('/auth/register')
+    const {name, email, password} = req.body
+
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      req.flash('error', errors.array()[0].msg)
+      return res.status(422).redirect('/auth/register')
     }
 
-    const candidate = await User.findOne({ email })
+    const hashPassword = await bcrypt.hash(password, 10)
+    const user = new User({
+      email, name, password: hashPassword, cart: {items: []}
+    })
+    await user.save()
+    req.flash('success', 'Account has been created!')
+    res.redirect('/auth/login')
+    await transporter.sendMail(regEmail(email))
 
-    if (candidate) {
-      req.flash('error', 'This user already exist!')
-      res.redirect('/auth/register')
-    } else {
-      const hashPassword = await bcrypt.hash(password, 10)
-      const user = new User({
-        email, name, password: hashPassword, cart: {items: []}
-      })
-      await user.save()
-      req.flash('success', 'Account has been created!')
-      res.redirect('/auth/login')
-      await transporter.sendMail(regEmail(email))
-    }
   } catch (e) {
     console.log(e)
   }

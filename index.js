@@ -16,7 +16,7 @@ const authRoutes = require('./routes/auth')
 const coursesRoutes = require('./routes/courses')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
-const keys = require('./keys')
+require('dotenv').config()
 
 const app = express()
 
@@ -31,16 +31,17 @@ app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
+
 const store = new MongoStore({
   collection: 'sessions',
-  uri: keys.MONGODB_URI
+  uri: process.env.MONGODB_URI
 
 })
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-  secret: keys.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store
@@ -61,7 +62,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    await mongoose.connect(keys.MONGODB_URI, {useNewUrlParser: true})
+    await mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
