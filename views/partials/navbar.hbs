@@ -19,11 +19,19 @@
           class="active"
           {{/if}}
         ><a href="/add">Add Course</a></li>
+
+        <li
+          {{#if isProfile}}
+          class="active"
+          {{/if}}
+        ><a href="/profile">Profile</a></li>
+
         <li
           {{#if isCart}}
           class="active"
           {{/if}}
         ><a href="/cart">Cart</a></li>
+
         <li
           {{#if isOrder}}
           class="active"

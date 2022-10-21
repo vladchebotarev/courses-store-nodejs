@@ -56,3 +56,12 @@
   background: rgba(0, 255, 0, .3);
   color: green;
 }
+
+.avatar {
+  max-width: 300px;
+  height: auto;
+}
+
+.btn-submit-profile {
+  margin-top: 40px;
+}

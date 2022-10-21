@@ -38,3 +38,18 @@ exports.courseValidators = [
   body('price').isNumeric().withMessage('Please input correct price!'),
   body('img', 'Please input correct image url!').isURL(),
 ]
+
+exports.resetPasswordValidator = [
+  body('password', 'Password must be at least six symbols!')
+    .isLength({min: 6, max: 56})
+    .isAlphanumeric()
+    .trim(),
+  body('confirm')
+    .custom((value, {req}) => {
+      if (value !== req.body.password) {
+        throw new Error('Password conformation is not the same!')
+      }
+      return true
+    })
+    .trim()
+]

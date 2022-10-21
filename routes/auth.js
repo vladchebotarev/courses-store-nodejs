@@ -7,7 +7,7 @@ const sendgrid = require('nodemailer-sendgrid-transport')
 const User = require('../models/user')
 const regEmail = require('../emails/registration')
 const resetEmail = require('../emails/reset')
-const {registerValidators} = require('../utils/validators')
+const {registerValidators, resetPasswordValidator} = require('../utils/validators')
 
 const router = Router()
 
@@ -153,12 +153,14 @@ router.get('/password/:token', async (req, res) => {
   }
 })
 
-router.post('/password', async (req, res) => {
+router.post('/password', resetPasswordValidator, async (req, res) => {
   try {
-    const {userId, token, password, confirm} = req.body
-    if (password !== confirm) {
-      req.flash('error', 'Password conformation is not the same!')
-      return res.redirect(`/auth/password/${token}`)
+    const {userId, token, password} = req.body
+
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      req.flash('error', errors.array()[0].msg)
+      return res.status(422).redirect(`/auth/password/${token}`)
     }
 
     const user = await User.findOne({
